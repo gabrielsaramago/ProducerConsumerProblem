@@ -5,7 +5,7 @@ public class Cooker implements Runnable{
     private int id;
     private static int count = 0;
     private boolean isCooking = false;
-    private int timeToCook = 2000;
+    private int timeToCook = 1000;
 
     private String name;
 
@@ -18,8 +18,20 @@ public class Cooker implements Runnable{
         name = "Cooker " + id;
     }
 
+    @Override
+    public void run() {
+        while(Restaurant.isOpen){
+            if(!isCooking){
+                searchOrder();
+            }
+            else{
+                prepareOrder(orderCooking);
+            }
+        }
+    }
+
     public void searchOrder(){
-       //search a order that is not getting ready yet
+        //search a order that is not getting ready yet
         synchronized (Restaurant.ordersQueue){
             Iterator<Order> value = Restaurant.ordersQueue.iterator();
             while(value.hasNext() && !isCooking){
@@ -50,20 +62,4 @@ public class Cooker implements Runnable{
 
     }
 
-
-    @Override
-    public void run() {
-        while(Restaurant.isOpen){
-            if(!isCooking){
-                searchOrder();
-            }
-            else{
-                prepareOrder(orderCooking);
-            }
-
-
-
-        }
-
-    }
 }
